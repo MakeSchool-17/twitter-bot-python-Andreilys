@@ -1,6 +1,11 @@
+import random
+
+
 file = open('stoicism.txt')
 
 a_string = file.read()
+
+# hello
 
 # print("%s" % a_string)
 #
