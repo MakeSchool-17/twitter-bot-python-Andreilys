@@ -1,6 +1,5 @@
 import random
 import sys
-import re
 
 
 # This function returns maximum amount of words in the text file
