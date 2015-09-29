@@ -1,6 +1,7 @@
 import sys
 import re
 import random
+import timeit
 
 
 # Takes the source text input from user, and tokenizes the text
@@ -10,53 +11,73 @@ def tokenizer(source_text):
     tokenized_text = re.split(r'[,;!? ]', open_file)
     return tokenized_text
 
-#
-# # histogram that takes a source text as input, and returns histogram data structure (dictionary)
-# def histogram_dic(tokenized_text):
-#     length = len(source_text)
-#     i = 0
-#     histogram_Dictionary = dict()
-#     for i in xrange(length):
-#         # check to see if the dictionary key exists already
-#         if source_text[i] in histogram_Dictionary:
-#             histogram_Dictionary[source_text[i]] += 1
-#         else:
-#             histogram_Dictionary[source_text[i]] = 1
-#     # removing some unnecssary words
-#     histogram_Dictionary.pop('', 0)
-#     return histogram_Dictionary
-#
-# # takes user inputted word, as well as the histogram and returns whether the word exists
-# # Big-O complexity is:
-# def frequency_dict(word, histogram):
-#     length = len(histogram)
-#     if histogram.has_key(word):
-#         return histogram[word]
-# # Key does not exist
-#     else:
-#         print("Key does not exist")
+
+# List function
+def list(length):
+    dict_words = '/usr/share/dict/words'
+    words_str  = open(dict_words, 'r').read()
+    all_words  = words_str.split("\n")
+    return all_words[0:length]
+
+# histogram that takes a source text as input, and returns histogram data structure (dictionary)
+def histogram_dic(tokenized_text):
+    length = len(tokenized_text)
+    i = 0
+    histogram_Dictionary = dict()
+    for i in xrange(length):
+        # check to see if the dictionary key exists already
+        if tokenized_text[i] in histogram_Dictionary:
+            histogram_Dictionary[tokenized_text[i]] += 1
+        else:
+            histogram_Dictionary[tokenized_text[i]] = 1
+    # removing some unnecssary words
+    histogram_Dictionary.pop('', 0)
+    return histogram_Dictionary
+
+# takes user inputted word, as well as the histogram and returns whether the word exists
+# Big-O complexity is: O(n)
+def frequency_dict(word, histogram):
+    length = len(histogram)
+    if histogram.has_key(word):
+        return histogram[word]
+# Key does not exist
+    else:
+        print("Key does not exist")
 
 
 def histogram_tuples(tokenized_text):
-    hgram = []                           # create a new list called hgram
-    for word in tokenized_text:                   # for each word in the list of words
-        index = find(word, hgram)        # check if word is in hgram already
-        if index == None:                # if word is not in histogram
-            hgram.append((word, 1))      # add a new word-count pair to hgram
-        else:                            # if word is already in hgram
-            count = hgram[index][1]      # find its current count
-            new_pair = (word, count + 1) # make a new word-count pair
-            hgram[index] = new_pair      # replace word-count pair
-    return hgram
+    histogram_tuple = []
+    for word in tokenized_text:
+        index = find(word, histogram_tuple)
+        if index == None:
+            histogram_tuple.append((word, 1))
+        else:
+            count = histogram_tuple[index][1]
+            new_pair = (word, count + 1)
+            histogram_tuple[index] = new_pair
+    return histogram_tuple
+
+# find function
+def find(item, histogram_tuple):
+    for index, pair in enumerate(histogram_tuple):
+        if pair[0] == item:
+            return index
+    return None
 
 
-# Big-O complexity is:
+# Big-O complexity is O(n):
 def frequency_tuples(word, histogram):
-    return None
+    index = find(word, histogram)
+    if index:
+        word_count_pair = histogram[index]
+        return word_count_pair[1]
+    else:
+        return 0
 
 
-def histogram_singlyLinkedList(tokenized_text):
-    return None
+def histogram_singlyLinkedList(words):
+    return histogram_tuple
+
 
 
 # Big-O complexity is:
@@ -97,10 +118,37 @@ def frequency_singlyLinkedList(word, histogram):
 
 
 if __name__ == '__main__':
-    source_text = raw_input('Enter Source text you would like to create a histogram data structure with: ')
-    # histogram that takes a source text as input, and returns histogram data structure (dictionarty)
-    tokenized_text = tokenizer(source_text)
-    print(histogram_tuples(tokenized_text))
+    # source_text = raw_input('Enter Source text you would like to create a histogram data structure with: ')
+    # # histogram that takes a source text as input, and returns histogram data structure (dictionarty)
+    # tokenized_text = tokenizer(list(10))
+
+    # List being used by words
+    hundred_words = list(100)
+    ten_thousand_words = list(1000)
+    hundred_search = hundred_words[-1]
+    ten_thousand_search = ten_thousand_words[-1]
+
+    # dictionary analysis
+    hundred_dictogram = histogram_dic(hundred_words)
+    ten_thousand_dictogram = histogram_dic(ten_thousand_words)
+    stmt  = "frequency_dict('{}', hundred_dictogram)".format(hundred_search)
+    setup = "from __main__ import frequency_dict, hundred_dictogram"
+    timer = timeit.Timer(stmt, setup=setup)
+    iterations = 10000
+    result = timer.timeit(number=iterations)
+    print("frequency_dict() time for 100-word dictogram: " + str(result))
+
+    # tuple analysis
+    hundred_tuplegram = histogram_tuples(hundred_words)
+    ten_thousand_tuplegram = histogram_tuples(ten_thousand_words)
+    stmt  = "frequency_tuples('{}', hundred_tuplegram)".format(hundred_search)
+    setup = "from __main__ import frequency_tuples, hundred_tuplegram"
+    timer = timeit.Timer(stmt, setup=setup)
+    iterations = 10000
+    result = timer.timeit(number=iterations)
+    print("frequency_tuple() time for 100-word tuplegram: " + str(result))
+
+    # print(frequency_tuples('a', histogram_tuple))
 
     # returns number of unique words in the histogram
     # number_of_unique_words = unique_words(histogram)
