@@ -75,14 +75,83 @@ def frequency_tuples(word, histogram):
         return 0
 
 
-def histogram_singlyLinkedList(words):
-    return histogram_tuple
+class Node(object):
+    def __init__(self, data=None, next_node=None, freq=None):
+        self.data = data
+        self.freq = freq
+        self.next_node = next_node
+
+    def get_data(self):
+        return self.data
+
+    def get_next(self):
+        return self.next_node
+
+    def get_freq(self):
+        return self.freq
+
+    def set_next(self, new_next):
+        self.next_node = new_next
 
 
+# List function
+def list(length):
+    dict_words = '/usr/share/dict/words'
+    words_str = open(dict_words, 'r').read()
+    all_words = words_str.split("\n")
+    return all_words[0:length]
 
-# Big-O complexity is:
-def frequency_singlyLinkedList(word, histogram):
-    return None
+
+class LinkedList(object):
+    def __init__(self, head=None):
+        self.head = head
+
+    def insert(self, data, freq):
+        new_node = Node(data)
+        new_node.freq = freq
+        new_node.set_next(self.head)
+        self.head = new_node
+
+    def size(self):
+        current = self.head
+        count = 0
+        while current:
+            count += 1
+            current = current.get_next()
+        return count
+
+    def search(self, data):
+        current = self.head
+        found = False
+        while current and found is False:
+            if current.get_data() == data:
+                found = True
+            else:
+                current = current.get_next()
+        if current is None:
+            return None
+        return current
+
+    def __str__(self):
+        current = self.head
+        return str(current.data)
+
+
+def linkogram(words):
+    linked_List = LinkedList()
+    for i in words:
+        if linked_List.search(i):
+            a = linked_List.search(i)
+            a.freq += 1
+        else:
+            linked_List.insert(i, 1)
+    return linked_List
+
+
+# Big-O complexity is: O(n)
+def frequency_singlyLinkedList(word, linkogram):
+    word = linkogram.search(word)
+    return ("The word frequency is: " + str(word.freq))
 
 # def random_word(histogram):
 #     list = []
@@ -148,6 +217,14 @@ if __name__ == '__main__':
     result = timer.timeit(number=iterations)
     print("frequency_tuple() time for 100-word tuplegram: " + str(result))
 
+    hundred_linkogram = linkogram(hundred_words)
+    ten_thousand_linkogram = linkogram(ten_thousand_words)
+    stmt  = "frequency_singlyLinkedList('{}', hundred_linkogram)".format(hundred_search)
+    setup = "from __main__ import frequency_singlyLinkedList, hundred_linkogram"
+    timer = timeit.Timer(stmt, setup=setup)
+    iterations = 10000
+    result = timer.timeit(number=iterations)
+    print("frequency_singlyLinkedList() time for 100-word linkogram: " + str(result))
     # print(frequency_tuples('a', histogram_tuple))
 
     # returns number of unique words in the histogram
