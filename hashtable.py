@@ -4,108 +4,139 @@ def hash_function(x, buckets):
 
 
 class Node(object):
-    def __init__(self, data=None, next_node=None):
+    def __init__(self, data=None, next=None):
         self.data = data
-        self.next_node = next_node
-
-    def get_data(self):
-        return self.data
-
-    def get_next(self):
-        return self.next_node
-
-    def get_tail(self):
-        return self.tail
-
-    def set_next(self, new_next):
-        self.next_node = new_next
+        self.next = next
 
 
 class LinkedList(object):
     def __init__(self, head=None, tail=None):
-        self.head = head
-        self.tail = tail
+        self.head = None
+        self.tail = None
 
-    def insert(self, data, freq):
-        new_node = Node(data)
-        new_node.set_next(self.head)
-        self.head = new_node
+    def show(self):
+        Nodes = []
+        current_node = self.head
+        while current_node is not None:
+            Nodes.append(current_node.data)
+            current_node = current_node.next
+        return Nodes
 
-    def size(self):
-        current = self.head
-        count = 0
-        while current:
-            count += 1
-            current = current.get_next()
-        return count
-
-    def search(self, data):
-        current = self.head
-        found = False
-        while current and found is False:
-            if current.get_data() == data:
-                found = True
+    def find(self, key):
+        current_node = self.head
+        while current_node is not None:
+            # if the first data point (the key) is equal to the data
+            if current_node.data[0] == key:
+                # returns the value
+                return current_node
             else:
-                current = current.get_next()
-        if current is None:
-            return None
-        return current
+                current_node = current_node.next
+        return None
 
-    def __str__(self):
-        current = self.head
-        return str(current.data)
+    def append(self, data):
+        node = Node(data)
+        if self.head is None:
+            self.head = self.tail = node
+        else:
+            self.tail.next = node
+        self.tail = node
+
+    def remove(self, node_value):
+        current_node = self.head
+        previous_node = None
+        while current_node is not None:
+            if current_node.data == node_value:
+                if previous_node is not None:
+                    previous_node.next = current_node.next
+                else:
+                    self.head = current_node.next
+
+            previous_node = current_node
+            current_node = current_node.next
 
 
 class HashTable(object):
-    def __init__(self, table=None, bucket=None):
-        # init with 10 buckets to start
-        self.bucket = 10
-        self.table = [[] for x in range(self.bucket)]
+    # initialize the hashtable
+    def __init__(self, table=None, bucket=10, size=0):
+        # init with a bucket size of 10
+        self.bucket = bucket
+        self.table = [None] * bucket
+        self.size = size
 
-    def set(self, input, value):
-        number_of_inputs = 0
-        for bucket in self.table:
-            if bucket:
-                number_of_inputs += 1
-        length = len(self.table)
-        # double the buckets if number of inputs is at 50% of length of table
-        if(number_of_inputs > length/2):
-            self.bucket = self.bucket * 2
-        self.table[hash_function(input, self.bucket)].append((input, value))
+    # set the value of the hash table
+    def set(self, key, value):
+        # find the correct bucket for key using hash algorithim
+        bucket_number = hash_function(key, self.bucket)
+
+        # create a new linked list node with both the key + value to be stored
+        if self.table[bucket_number] is None:
+            linked_List = LinkedList()
+            linked_List.append((key, value))
+            self.table[bucket_number] = linked_List
+            self.size = self.size + 1
+        else:
+            # TODO check key if already inside
+            self.table[bucket_number].append((key, value))
+            self.size = self.size + 1
+            # add key value to the linkedList
+            # append a new node to the linkedlist in the bucket
+        return self.table
+
+    # check load factor
+    def check_load_factor(self, items, size):
+        return (items/size)
+
+    # resize the table/rehash all the current table functions as well
+    def resize(self):
+        return None
 
     def get(self, key):
-        # Loop through i's
-        for i in self.table:
-            if i:
-                if i[0][0] == key:
-                    return i[0][1]
+        bucket_number = hash_function(key, self.bucket)
+        # if the table w/ bucket number exists, return the value
+        if self.table[bucket_number].find(key):
+            print("Value is: " + str(self.table[bucket_number].find(key).data[1]))
 
+    # update the value of the hash table
     def update(self, key, value):
-        for bucket in self.table:
-            if bucket:
-                if bucket[0][0] == key:
-                    # replace bucket[0]
-                    bucket[0] = (key, value)
+        bucket_number = hash_function(key, self.bucket)
+        # TODO
+        if self.table[bucket_number].find(key):
+            Node = self.table[bucket_number].find(key)
+            Node.data = (key, value)
 
-    def keys(self):
-        keyList = []
-        for i in self.table:
-            if i:
-                keyList.append(i[0][0])
-        return keyList
+    def return_keys(self):
+        keys = []
+        length = len(self.table)
+        for bucket_number in range(length):
+            if self.table[bucket_number]:
+                # need to learn how to print keys inside the table
+                Nodes = self.table[bucket_number].show()
+                length = len(Nodes)
+                for i in range(length):
+                    keys.append(Nodes[i][0])
+        return keys
 
-    def values(self):
-        keyList = []
-        for i in self.table:
-            if i:
-                keyList.append(i[0][1])
-        return keyList
+    # return the values
+    def return_values(self):
+        values = []
+        length = len(self.table)
+        for bucket_number in range(length):
+            if self.table[bucket_number]:
+                # need to learn how to print keys inside the table
+                Nodes = self.table[bucket_number].show()
+                length = len(Nodes)
+                for i in range(length):
+                    values.append(Nodes[i][1])
+        return values
 
 if __name__ == '__main__':
-    hashtable = HashTable()
-    hashtable.set("Dogs", 5)
-    hashtable.set("Turtles", 5)
-    hashtable.set("Cats", 9)
-    hashtable.update("Turtles", 20)
-    print(hashtable.keys())
-    print(hashtable.values())
+    roman = HashTable()
+    roman.set('I', 1)
+    roman.set('B', 2)
+    roman.set('C', 3)
+    roman.set('D', 4)
+    roman.set('R', 2)
+    roman.get('R')
+    roman.update("I", 5)
+    print(roman.return_values())
+    print(roman.return_keys())
