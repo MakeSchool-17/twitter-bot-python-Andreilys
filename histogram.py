@@ -11,7 +11,7 @@ def tokenizer(source_text):
     return tokenized_text
 
 
-# histogram that takes a source text as input, and returns histogram data structure (dictionarty)
+# histogram that takes a source text as input, and returns histogram data structure (dictionary)
 def histogram(source_text):
     length = len(source_text)
     histogram_Dictionary = dict()
@@ -69,7 +69,7 @@ def weighted_word(histogram):
     for key in histogram:
         histogram[key] = histogram[key] / float(number_of_words)
     # select random number between 0 and 1
-    random_Number = random.randint(0, 1)
+    random_Number = random.uniform(0.0, 1.0)
     # walk the list, subtracting weight of each number as you go, as you get to 0, choose the item
     for key in histogram:
         random_Number = random_Number - histogram[key]
