@@ -1,9 +1,8 @@
-import re
-import parsing
+import text_tokenizer
 import histogram
 import hashtable
 import Heap
-from parsing import *
+from text_tokenizer import *
 from hashtable import *
 from histogram import *
 from Heap import MaxHeap
@@ -16,8 +15,9 @@ from Heap import MaxHeap
 if __name__ == '__main__':
     user_input = "humannature.txt"
     tokenized_text = text_Parser(user_input)
+    # TODO are we supposed to rewrite the histogram function to incorporate our hash table?
     histogram = histogram(tokenized_text)
     max_heap = MaxHeap()
     for i in histogram:
         max_heap.insert((i, histogram[i]))
-    print(max_heap.peek(20)[0])
+    print(max_heap.peek(20))

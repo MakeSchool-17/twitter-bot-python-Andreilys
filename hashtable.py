@@ -82,11 +82,11 @@ class HashTable(object):
             # append a new node to the linkedlist in the bucket
         return self.table
 
-    # check load factor
-    def check_load_factor(self, items, size):
-        return (items/size)
+    # TODO should this be when above number "x"?
+    def check_load_factor(self):
+        return (float(self.size)/self.bucket)
 
-    # resize the table/rehash all the current table functions as well
+    # TODO resize the table/rehash all the current table functions as well
     def resize(self):
         return None
 
@@ -99,7 +99,6 @@ class HashTable(object):
     # update the value of the hash table
     def update(self, key, value):
         bucket_number = hash_function(key, self.bucket)
-        # TODO
         if self.table[bucket_number].find(key):
             Node = self.table[bucket_number].find(key)
             Node.data = (key, value)
@@ -109,7 +108,6 @@ class HashTable(object):
         length = len(self.table)
         for bucket_number in range(length):
             if self.table[bucket_number]:
-                # need to learn how to print keys inside the table
                 Nodes = self.table[bucket_number].show()
                 length = len(Nodes)
                 for i in range(length):
@@ -122,7 +120,6 @@ class HashTable(object):
         length = len(self.table)
         for bucket_number in range(length):
             if self.table[bucket_number]:
-                # need to learn how to print keys inside the table
                 Nodes = self.table[bucket_number].show()
                 length = len(Nodes)
                 for i in range(length):
@@ -138,5 +135,6 @@ if __name__ == '__main__':
     roman.set('R', 2)
     roman.get('R')
     roman.update("I", 5)
+    print(roman.check_load_factor())
     print(roman.return_values())
     print(roman.return_keys())
