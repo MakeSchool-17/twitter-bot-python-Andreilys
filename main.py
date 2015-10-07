@@ -20,4 +20,4 @@ if __name__ == '__main__':
     max_heap = MaxHeap()
     for i in histogram:
         max_heap.insert((i, histogram[i]))
-    print(max_heap.peek(20))
+    print(max_heap.peek(10))
