@@ -4,9 +4,10 @@ from text_tokenizer import *
 
 def build_dict(tokenized_text):
     tokenized_text.remove('')
-    dictionary = {}
+    length = len(tokenized_text)
+    dictionary = dict()
     for i, word in enumerate(tokenized_text):
-        print(word)
+        dictionary[(word, tokenized_text[i + 1 - length])] = 0
     return dictionary
 
 def generate_sentences(dict):
@@ -17,4 +18,4 @@ if __name__ == '__main__':
     # to see how to enter arguments in Python scroll down
     words = "text.txt"
     tokenized_text = text_Parser(words)
-    build_dict(tokenized_text)
+    print(build_dict(tokenized_text))
