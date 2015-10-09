@@ -2,20 +2,34 @@ import text_tokenizer
 from text_tokenizer import *
 
 
-def build_dict(tokenized_text):
-    tokenized_text.remove('')
-    length = len(tokenized_text)
-    dictionary = dict()
-    for i, word in enumerate(tokenized_text):
-        dictionary[(word, tokenized_text[i + 1 - length])] = 0
-    return dictionary
+class SentenceGenerator(object):
 
-def generate_sentences(dict):
-    return None
+    def __init__(self, size):
+        self.size = size
+
+    def build_dict(self, tokenized_text):
+        tokenized_text.remove('')
+        length = len(tokenized_text) - 1
+        i = 0
+        dictionary = [dict() * self.size]
+        for word in tokenized_text:
+            if i != length:
+                dictionary[word] = tokenized_text[i + 1]
+                i = i + 1
+        return dictionary
+
+
+    def generate_sentences(self, dictionary):
+        sentence = ""
+        for key in dictionary:
+            sentence = sentence + ' ' + key
+            sentence = sentence + ' ' + dictionary[key]
+        print(sentence)
 
 if __name__ == '__main__':
-    # keep this function call here
-    # to see how to enter arguments in Python scroll down
+    # tokenize the text
     words = "text.txt"
     tokenized_text = text_Parser(words)
-    print(build_dict(tokenized_text))
+    sentence_generator = SentenceGenerator(10)
+    dictionary = SentenceGenerator.build_dict(tokenized_text)
+    print(sentenceGenerator.generate_sentences(dictionary))
